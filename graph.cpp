@@ -44,6 +44,8 @@ namespace adjacency_list_graph {
         graph g;
         edge e;
         while(is >> e.first >> e.second  >> e.weight){
+            --e.first;
+            --e.second;
             g.adjacency_list.push_back(e);
         }
         return g;

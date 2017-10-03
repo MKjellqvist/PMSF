@@ -24,7 +24,7 @@ namespace adjacency_list_graph {
     }
     
     std::ostream& operator <<(std::ostream& o, const edge& e){
-        return o << e.first << " > " << e.second << " : " << e.weight << "\n";
+        return o << e.first + 1 << " > " << e.second + 1 << " : " << e.weight << "\n";
     }
     
     std::vector<edge> vertex::get_neighbors() {
@@ -50,7 +50,7 @@ namespace adjacency_list_graph {
 
     
     std::ostream& operator <<(std::ostream& o, const vertex& v){
-        return o << v.get_index() << "\n";
+        return o << v.get_index() + 1 << "\n";
     }
 }
 

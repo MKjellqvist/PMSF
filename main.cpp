@@ -44,30 +44,36 @@ edgelist algorithm2(graph* G, int list_start, int list_end, std::vector<int>& co
                 break;
             if (!visited[w]) {
                 visited[w] = true;
-            }
-            MST.push_back(w);
-            bool replaced_w = false;
-            for (auto neighbor : G->get_vertex(w).get_neighbors()) {
-                if (!color[neighbor])
-                    color[neighbor] = my_color;
-                std::priority_queue<edge> replace_w;
-                while (H.size()) {
-                    auto h_u = H.top();
-                    H.pop();
-                    if (h_u.second == neighbor.second
-                            && h_u.weight > neighbor.weight) {
-                        replace_w.push(neighbor);
-                        replaced_w = true;
-                    } else {
-                        replace_w.push(h_u);
+                MST.push_back(w);
+                bool replaced_w = false;
+                for (auto neighbor : G->get_vertex(w).get_neighbors()) {
+                    edge u;
+                    u.first = neighbor.second;
+                    u.second = neighbor.first;
+                    u.weight = neighbor.weight;
+
+                    if (!color[u])
+                        color[u] = my_color;
+                    std::priority_queue<edge> replace_w;
+                    while (H.size()) {
+                        auto h_u = H.top();
+                        H.pop();
+                        if (h_u == u
+                                && h_u.weight > u.weight) {
+                            replace_w.push(u);
+                            replaced_w = true;
+                        } else {
+                            replace_w.push(h_u);
+                        }
                     }
+                    H.swap(replace_w);
+                    if (!replaced_w)
+                        H.push(u);
                 }
-                H.swap(replace_w);
-                if (!replaced_w)
-                    H.push(neighbor);
             }
         }
     }
+    return MST;
 }
 int p = 1;
 
@@ -80,33 +86,33 @@ edgelist algorithm1(graph* G, int baseN) {
         while (n > baseN) {
             // initialization, don't think this is needed.
             int startI = i * n / p;
-            int endI = (i+1) * n / p -1;
-            for (int i = startI; i <= endI; i++ ){
+            int endI = (i + 1) * n / p - 1;
+            for (int i = startI; i <= endI; i++) {
                 visited[i] = color[i] = 0;
             }
-            
+
             auto mst_list = algorithm2(G, startI, endI + 1, color, visited);
-            
+
             edgelist MST;
-            
-            for (int i = startI; i <= endI; i++ ){
-                if(!visited[i]){
+
+            for (int i = startI; i <= endI; i++) {
+                if (!visited[i]) {
                     // Find lightest incident edge
                     edge min_edge;
                     min_edge.weight = std::numeric_limits<double>::max();
-                    
-                    for(auto e: mst_list){
-                        if(e.second == i &&  e.weight < min_edge.weight){
+
+                    for (auto e : mst_list) {
+                        if (e.second == i && e.weight < min_edge.weight) {
                             min_edge = e;
                         }
                     }
-                    
-                    if(min_edge.weight < std::numeric_limits<double>::max())
+
+                    if (min_edge.weight < std::numeric_limits<double>::max())
                         MST.push_back(min_edge);
                 }
             }
-            
-            
+            n -= baseN;
+
         }
     }
 }
